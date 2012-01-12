@@ -1,0 +1,112 @@
+Stack.h
+
+struct stack 
+{ 
+	void *data[10]; 		//Structure definition
+	int top,n; 
+}; 
+
+void push(struct stack *s,void *element) 
+{ //Pushing the element
+	s->top++; 
+	(s->data[s->top])=element; 
+} 
+
+void * pop(struct stack *s) 
+{ //Poping the element
+	void *element=(s->data[s->top]); 
+	s->top--; 
+	return(element); 
+} 
+
+
+int isempty(struct stack *s) 
+{ //Empty condition
+	if(s->top==-1) 
+		return 1; 
+	else 
+		return 0; 
+} 
+
+int isfull(struct stack *s) 
+{ //Full condition
+	if(s->top==s->n-1) 
+		return 1; 
+	else 
+		return 0; 
+} 
+
+
+
+Main.c
+
+#include<stdio.h> 
+#include<malloc.h> 
+#include"/home/sandy/Desktop/DS/STACK.H" 
+void disp(struct stack s); 
+int main() 
+{ //Declaring and allocating memory for structure variable
+	struct stack *s=(struct stack *)malloc(sizeof(struct stack)); 
+	int ch,*element; 
+	s->top=-1; 
+	printf("How many elements to store in stack?"); 
+	scanf("%d",&(s->n)); 
+	while(1) 
+	{ //Prompting and accepting choice from user
+		printf("\n----------------Menu-------------------\n"); 
+		printf("1.Push\n"); 
+		printf("2.Pop\n"); 
+		printf("3.Display\n"); 
+		printf("4.Exit\n"); 
+		printf("Enter your choice:"); 
+		scanf("%d",&ch); 
+		switch(ch) 
+		{ 
+			case 1: //Case to push the element
+					if(isfull(s)) 
+					{ 
+						printf("Stack is full."); 
+					} 
+					else 
+					{ 
+						element=(int *)malloc(sizeof(int)); 
+						printf("Enter element to push into the stack:"); 
+						scanf("%d",element); 
+						push(s,element); 
+					} 
+					break; 
+			case 2: //Case to pop the element
+					if(isempty(s)) 
+					{ 
+						printf("Stack is empty."); 
+					} 
+					else 
+					{ 
+						element=(int *)pop(s); 
+						printf("Element %d poped from stack.",*element); 
+					} 
+					break; 
+			case 3: //Case to display the element
+					if(isempty(s)) 
+					{ 
+						printf("Stack is empty."); 
+					} 
+					else 
+					{ 
+						disp(*s); 
+					} 
+					break; 
+			case 4: //Exit case
+					return 0; 
+			default: //Default case
+					printf("Invalid choice"); 
+		} 
+	} 
+} 
+
+void disp(struct stack s) 
+{ //Displaying the stack elements
+	printf("Elements of stack are:\n"); 
+		while(s.top>-1) 
+			printf("%d ",*((int *)s.data[s.top--])); 
+}

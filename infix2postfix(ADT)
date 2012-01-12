@@ -1,0 +1,169 @@
+Stack.h
+
+struct stack 
+{ 
+	void *data[10]; 		//Structure definition
+	int top,n; 
+}; 
+
+void push(struct stack *s,void *element) 
+{ //Pushing the element
+	s->top++; 
+	(s->data[s->top])=element; 
+} 
+
+void * pop(struct stack *s) 
+{ //Poping the element
+	void *element=(s->data[s->top]); 
+	s->top--; 
+	return(element); 
+} 
+
+
+int isempty(struct stack *s) 
+{ //Empty condition
+	if(s->top==-1) 
+		return 1; 
+	else 
+		return 0; 
+} 
+
+int isfull(struct stack *s) 
+{ //Full condition
+	if(s->top==s->n-1) 
+		return 1; 
+	else 
+		return 0; 
+} 
+
+
+Main.c
+
+#include<stdio.h>
+#include<malloc.h>
+#include"/home/sandy/Desktop/DS/STACK.H"
+int comp(char ch);
+int main()
+{
+	//Declaring and allocating memory for structure variable
+	struct stack *s;
+	s=(struct stack *)malloc(sizeof(struct stack));
+	s->top=-1;
+	char infix[20],postfix[20],*ch;
+	int i=0,j=0,prec1,prec2;
+	//Accepting the expression
+	printf("Enter infix expression:");
+	gets(infix);
+	//Checking 
+	while(infix[i]!='\0')
+	{	//Checking for operand
+		if(infix[i]>='a' && infix[i]<='z')
+		{
+			postfix[j]=infix[i];
+			j++;
+			i++;
+		}
+		else if(infix[i]=='(')	//Checking for opening bracket and pushing it
+		{
+			ch=(char *)malloc(sizeof(char));
+			*ch=infix[i];
+			push(s,ch);
+			i++;
+		}
+		else if(infix[i]==')')	//Checking for closing bracket and poping elements from stack
+		{
+			while(s->top>-1 && (*(char *)s->data[s->top])!='(')
+			{
+				postfix[j]=*((char *)pop(s));
+				j++;
+			}
+			if(s->top==-1)
+			{
+					printf("Invalid number of paranthesis in expression.");
+					return 0;
+			}
+			else
+			{
+				s->top--;
+				i++;
+			}
+		}
+		else
+		{//Checking and comparing precedence of encountered operator with TOS operator
+			if(s->top!=-1)	//Empty conditon
+			{
+				if(*((char *)s->data[s->top])=='(')
+				{
+					prec1=2;
+					prec2=1;
+				}
+				else
+				{
+					prec1=comp(infix[i]);
+					prec2=comp(*((char *)s->data[s->top]));
+				}
+			}
+			else
+			{
+				prec1=comp(infix[i]);
+				if(prec1==0)	//Condition for invalid operator
+					return 0;
+				prec2=0;
+			}
+			if(prec1>prec2)
+			{//Pushing the encountered operator
+				ch=(char *)malloc(sizeof(char));
+				*ch=infix[i];
+				push(s,ch);
+				i++;
+			}
+			else
+			{//Poping operator from TOS and pushing the encountered one
+				postfix[j]=*((char *)pop(s));
+				j++;
+				ch=(char *)malloc(sizeof(char));
+				*ch=infix[i];
+				push(s,ch);
+				i++;
+			}
+		}
+	}
+	while(s->top!=-1)
+	{//Checking validity of opening and closing braces
+		postfix[j]=*((char *)pop(s));
+		if(postfix[j]=='(')
+		{
+					printf("Invalid number of paranthesis in expression");
+					return 0;
+		}
+		else
+			j++;
+	}
+	postfix[j]='\0';
+	puts(postfix);
+	return 0;
+}
+
+//Function defintion
+int comp(char ch)
+{//Switch to return the precedence of operator
+	switch(ch)
+	{
+		case '$':
+		case '^':
+					return 3;
+					break;
+		case '*':
+		case '/':
+		case '%':
+					return 2;
+					break;
+		case '+':
+		case '-':
+					return 1;
+					break;
+		default:
+					printf("%c is invalid element in expression",ch);
+					return 0;
+	}
+}

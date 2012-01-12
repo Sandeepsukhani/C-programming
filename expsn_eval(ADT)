@@ -1,0 +1,114 @@
+Stack.h
+
+struct stack 
+{ 
+	void *data[10]; 		//Structure definition
+	int top,n; 
+}; 
+
+void push(struct stack *s,void *element) 
+{ //Pushing the element
+	s->top++; 
+	(s->data[s->top])=element; 
+} 
+
+void * pop(struct stack *s) 
+{ //Poping the element
+	void *element=(s->data[s->top]); 
+	s->top--; 
+	return(element); 
+} 
+
+
+int isempty(struct stack *s) 
+{ //Empty condition
+	if(s->top==-1) 
+		return 1; 
+	else 
+		return 0; 
+} 
+
+int isfull(struct stack *s) 
+{ //Full condition
+	if(s->top==s->n-1) 
+		return 1; 
+	else 
+		return 0; 
+} 
+
+
+Main.c
+
+#include<stdio.h>
+#include<malloc.h>
+#include"/home/sandy/Desktop/DS/STACK.H"
+int main()
+{//Declaring and allocating memory for structure variable
+	struct stack *s=(struct stack *)malloc(sizeof(struct stack));
+	char postfix[20];
+	int a,b,i=0,*element;
+	s->top=-1;
+	//Prompting and accepting postfix expression
+	printf("Enter postfix expression:");
+	gets(postfix);
+	while(postfix[i]!='\0')
+	{
+		if(postfix[i]>='0' && postfix[i]<='9')
+		{//Checking and pushing constants
+			element=(int *)malloc(sizeof(int));
+			*element=postfix[i]-48;
+			push(s,element);
+		}
+		else
+		{
+			if(s->top<1)
+			{
+				printf("Invalid expression.");
+				return 1;
+			}
+			else
+			{
+				switch(postfix[i])
+				{//Switch to perform arithmetic operation
+					case '*':
+						 b=*((int *)pop(s));
+						 a=*((int *)pop(s));
+						 element=(int *)malloc(sizeof(int));
+						 *element=a*b;
+						 push(s,element);	//Pushing the result
+						 break;
+					case '/':
+						 b=*((int *)pop(s));
+						 a=*((int *)pop(s));
+						 element=(int *)malloc(sizeof(int));
+						 *element=a/b;
+						 push(s,element);	//Pushing the result
+						 break;
+					case '+':
+						 b=*((int *)pop(s));
+						 a=*((int *)pop(s));
+						 element=(int *)malloc(sizeof(int));
+						 *element=a+b;
+						 push(s,element);	//Pushing the result
+						 break;
+					case '-':
+						 b=*((int *)pop(s));
+						 a=*((int *)pop(s));
+						 element=(int *)malloc(sizeof(int));
+						 *element=a-b;
+						 push(s,element);	//Pushing the result
+						 break;
+					default://Case for invalid operator
+						printf("Invalid operator in expression.");
+						return 1;
+				}
+			}
+		}
+		i++;
+	}
+	if(s->top!=0)
+		printf("Invalid number of operators in expression.");
+	else
+		printf("Result of expression is %d",*((int *)pop(s)));
+	return 0;
+}
